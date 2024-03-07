@@ -169,7 +169,7 @@ serve(app, async ({ port }) => {
   await esBuildServer([resolveApp("server.tsx"), resolveApp("hydrate.tsx"), resolveApp("tailwind.tsx")]);
   await esBuildClient([resolveApp("_client.tsx"), resolveApp("_stream.tsx"), resolveApp("_hydrate.tsx")]);
   await esBuildStream([resolveApp("stream.tsx")]);
-  await esBuildTailwind([resolveApp("style.css")])
+  await esBuildTailwind([resolveApp("style.css")]);
 
   console.log(`Server is running on port ${port}`)
 });

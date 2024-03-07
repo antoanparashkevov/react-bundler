@@ -4,6 +4,7 @@ import { resolveBuild } from "../resolvePaths";
 export default async function Config(entryPoints: string[]) {
     await esbuild({
         entryPoints,
-        outdir: resolveBuild()
+        outdir: resolveBuild(),
+        packages: "external",// avoid bundling npm packages
     });
 }
