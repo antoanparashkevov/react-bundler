@@ -16,7 +16,51 @@ import { renderToString } from 'react-dom/server';
 // @ts-ignore
 import * as ReactServerDomWebpack from 'react-server-dom-webpack/server.browser'
 
-const app = new Hono()
+const app = new Hono();
+
+app.get("/", (c) => {
+  return c.html(`
+    <!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <title>Navigation</title>
+        </head>
+        <body style='background-color: black;'>
+          <header style="width: 100vw; height: 90px">
+            <nav style="width: 100%;">
+              <ul style="display: flex; justify-content: space-between; align-items: center;">
+                <li style="background-color: gray; border-radius: 8px;">
+                  <a href='/server' style="text-decoration: none; display: block; padding: 1rem; color: white; font-size: 1rem;">
+                    Server
+                  </a>
+                </li>
+                <li style="background-color: gray; border-radius: 8px;">
+                  <a href='/client' style="text-decoration: none; display: block; padding: 1rem; color: white; font-size: 1rem;">
+                    Client
+                  </a>
+                </li>
+                <li style="background-color: gray; border-radius: 8px;">
+                  <a href='/stream' style="text-decoration: none; display: block; padding: 1rem; color: white; font-size: 1rem;">
+                    Stream
+                  </a>
+                </li>
+                <li style="background-color: gray; border-radius: 8px;">
+                  <a href='/hydrate' style="text-decoration: none; display: block; padding: 1rem; color: white; font-size: 1rem;">
+                    Hydrate
+                  </a>
+                </li>
+                <li style="background-color: gray; border-radius: 8px;">
+                  <a href='/tailwind' style="text-decoration: none; display: block; padding: 1rem; color: white; font-size: 1rem;">
+                    Tailwind
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </header>
+        </body>
+    </html>
+  `);
+})
 
 app.get('/server', async (c) => {
   // @ts-ignore
