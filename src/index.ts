@@ -6,6 +6,7 @@ import esBuildServer from './esbuild/server/esbuild.config';
 import esBuildClient from './esbuild/client/esbuild.config';
 import esBuildStream from './esbuild/stream/esbuild.config';
 import esBuildTailwind from './esbuild/tailwind/esbuild.config';
+import { clientEntryPoints } from './esbuild/plugins/resolve-client-imports';
 
 //helpers
 import { resolveApp } from './esbuild/resolvePaths';
@@ -166,9 +167,9 @@ app.get("/tailwind", async (c) => {
 app.use('/build/*', serveStatic());
 
 serve(app, async ({ port }) => {
-  await esBuildServer([resolveApp("server.tsx"), resolveApp("hydrate.tsx"), resolveApp("tailwind.tsx")]);
-  await esBuildClient([resolveApp("_client.tsx"), resolveApp("_stream.tsx"), resolveApp("_hydrate.tsx")]);
   await esBuildStream([resolveApp("stream.tsx")]);
+  await esBuildServer([resolveApp("server.tsx"), resolveApp("hydrate.tsx"), resolveApp("tailwind.tsx")]);
+  await esBuildClient([resolveApp("_client.tsx"), resolveApp("_stream.tsx"), resolveApp("_hydrate.tsx"), ...clientEntryPoints]);
   await esBuildTailwind([resolveApp("style.css")]);
 
   console.log(`Server is running on port ${port}`)

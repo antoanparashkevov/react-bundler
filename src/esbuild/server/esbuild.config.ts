@@ -1,5 +1,5 @@
 import { build as esbuild } from 'esbuild';
-import { resolveApp, resolveBuild } from '../resolvePaths';
+import { resolveBuild } from '../resolvePaths';
 
 export default async function Config(entryPoints: string[]) {
     await esbuild({
@@ -8,5 +8,3 @@ export default async function Config(entryPoints: string[]) {
         packages: "external",// avoid bundling npm packages
     });
 }
-
-const catchJsxFilesRegex = /\.tsx$/

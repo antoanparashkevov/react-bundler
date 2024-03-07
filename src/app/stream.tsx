@@ -1,4 +1,7 @@
 import { Suspense } from "react";
+// @ts-ignore
+// It is required to insert the extension (.tsx) in order to catch this file in our filter plugin (see the esbuild/stream/esbuild.config.js)
+import Like from "./Like.tsx";
 
 type Item = {
     id: number;
@@ -30,6 +33,7 @@ const Albums = async (): Promise<JSX.Element> => {
                 <li key={item.id}>
                     <h1>{item.name}</h1>
                     <p>{item.age}</p>
+                    <Like />
                 </li>
             ))}
         </ul>
