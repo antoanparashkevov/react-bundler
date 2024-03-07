@@ -5,6 +5,7 @@ import { Hono } from 'hono'
 import esBuildServer from './esbuild/server/esbuild.config';
 import esBuildClient from './esbuild/client/esbuild.config';
 import esBuildStream from './esbuild/stream/esbuild.config';
+import esBuildTailwind from './esbuild/tailwind/esbuild.config';
 
 //helpers
 import { resolveApp } from './esbuild/resolvePaths';
@@ -87,7 +88,7 @@ app.get("/hydrate", async (c) => {
     <!DOCTYPE html>
     <html lang="en">
         <head>
-            <title>React Server Component</title>
+            <title>React Hydration</title>
         </head>
         <body style='background-color: black;'>
           <div id='root'>${html}</div>
@@ -97,12 +98,34 @@ app.get("/hydrate", async (c) => {
   `);
 })
 
+app.get("/tailwind", async (c) => {
+  // @ts-ignore
+  const TailwindPage = await import('../build/tailwind.js');
+  const Comp = createElement(TailwindPage.default);
+
+  const html = renderToString(Comp);
+
+  return c.html(`
+    <!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <title>React Server Component</title>
+            <link rel='stylesheet' href='/build/style.css'>
+        </head>
+        <body style='background-color: black;'>
+          ${html}
+        </body>
+    </html>
+  `);
+});
+
 app.use('/build/*', serveStatic());
 
 serve(app, async ({ port }) => {
-  await esBuildServer([resolveApp("server.tsx"), resolveApp("hydrate.tsx")]);
+  await esBuildServer([resolveApp("server.tsx"), resolveApp("hydrate.tsx"), resolveApp("tailwind.tsx")]);
   await esBuildClient([resolveApp("_client.tsx"), resolveApp("_stream.tsx"), resolveApp("_hydrate.tsx")]);
   await esBuildStream([resolveApp("stream.tsx")]);
+  await esBuildTailwind([resolveApp("style.css")])
 
   console.log(`Server is running on port ${port}`)
 });
