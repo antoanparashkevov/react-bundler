@@ -1,5 +1,5 @@
 import { build as esbuild } from 'esbuild';
-import { resolveApp, resolveBuild } from '../resolvePaths';
+import { resolveBuild } from '../resolvePaths';
 
 export default async function Config(entryPoints: string[]) {
     await esbuild({

@@ -10,7 +10,7 @@ export function resolveApp(path: string = "") {
 }
 
 export function resolveBuild(path: string = "") {
-	const appBaseBuild = new URL("../build/", import.meta.url);
+	const appBaseBuild = new URL("../../build/", import.meta.url);
 
 	return new URL(path, appBaseBuild).pathname;
 }
