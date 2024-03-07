@@ -75,13 +75,33 @@ app.get("/stream", async (c) => {
         </body>
     </html>
   `);
+});
+
+app.get("/hydrate", async (c) => {
+  // @ts-ignore
+  const HydratePage = await import('../build/hydrate.js');
+  const Comp = createElement(HydratePage.default);
+
+  const html = renderToString(Comp);
+  return c.html(`
+    <!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <title>React Server Component</title>
+        </head>
+        <body style='background-color: black;'>
+          <div id='root'>${html}</div>
+          <script src="/build/_hydrate.js"></script>
+        </body>
+    </html>
+  `);
 })
 
 app.use('/build/*', serveStatic());
 
 serve(app, async ({ port }) => {
-  await esBuildServer([resolveApp("server.tsx")]);
-  await esBuildClient([resolveApp("_client.tsx"), resolveApp("_stream.tsx")]);
+  await esBuildServer([resolveApp("server.tsx"), resolveApp("hydrate.tsx")]);
+  await esBuildClient([resolveApp("_client.tsx"), resolveApp("_stream.tsx"), resolveApp("_hydrate.tsx")]);
   await esBuildStream([resolveApp("stream.tsx")]);
 
   console.log(`Server is running on port ${port}`)
