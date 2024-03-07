@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
+    "strict": true,
     "target": "ESNext",
     "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "strict": true,
+    "moduleResolution": "Node",
     "types": [
       "node"
     ],
     "jsx": "react-jsx",
-    "jsxImportSource": "hono/jsx",
+    "allowSyntheticDefaultImports": true
   }
 }
