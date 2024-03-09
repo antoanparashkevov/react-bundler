@@ -1,4 +1,4 @@
-import ClientPage from './client.js';
+import ClientPage from './client.tsx';
 import { createRoot } from "react-dom/client";
 
 const domNode = document.getElementById("root")!;
