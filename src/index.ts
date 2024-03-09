@@ -6,7 +6,6 @@ import esBuildServer from './esbuild/server/esbuild.config';
 import esBuildClient from './esbuild/client/esbuild.config';
 import esBuildStream from './esbuild/stream/esbuild.config';
 import esBuildTailwind from './esbuild/tailwind/esbuild.config';
-import { clientEntryPoints } from './esbuild/plugins/resolve-client-imports';
 
 //helpers
 import { resolveApp } from './esbuild/resolvePaths';
@@ -18,6 +17,7 @@ import { renderToString } from 'react-dom/server';
 import * as ReactServerDomWebpack from 'react-server-dom-webpack/server.browser'
 
 const app = new Hono();
+const clientComponentMap: Record<string, { id: string; name: string; chunks: []; async: boolean}> = {};
 
 app.get("/", (c) => {
   return c.html(`
@@ -92,7 +92,7 @@ app.get('/client', async (c) => {
         </head>
         <body style='background-color: black;'>
           <div id='root'></div>
-          <script src="/build/_client.js"></script>
+          <script type='module' src="/build/_client.js"></script>
         </body>
     </html>
   `);
@@ -103,7 +103,7 @@ app.get("/api/stream", async (c) => {
   const StreamPage = await import('../build/stream.js');
   const Comp = createElement(StreamPage.default);
 
-  const stream = ReactServerDomWebpack.renderToReadableStream(Comp);
+  const stream = ReactServerDomWebpack.renderToReadableStream(Comp, clientComponentMap);
 
   return new Response(stream);
 });
@@ -117,7 +117,7 @@ app.get("/stream", async (c) => {
         </head>
         <body style='background-color: black;'>
           <div id='root'></div>
-          <script src="/build/_stream.js"></script>
+          <script type='module' src="/build/_stream.js"></script>
         </body>
     </html>
   `);
@@ -167,9 +167,9 @@ app.get("/tailwind", async (c) => {
 app.use('/build/*', serveStatic());
 
 serve(app, async ({ port }) => {
-  await esBuildStream([resolveApp("stream.tsx")]);
+  const clientEntryPoints = await esBuildStream([resolveApp("stream.tsx")]);
+  await esBuildClient([resolveApp("_client.tsx"), resolveApp("_stream.tsx"), resolveApp("_hydrate.tsx"), ...clientEntryPoints], clientComponentMap);
   await esBuildServer([resolveApp("server.tsx"), resolveApp("hydrate.tsx"), resolveApp("tailwind.tsx")]);
-  await esBuildClient([resolveApp("_client.tsx"), resolveApp("_stream.tsx"), resolveApp("_hydrate.tsx"), ...clientEntryPoints]);
   await esBuildTailwind([resolveApp("style.css")]);
 
   console.log(`Server is running on port ${port}`)
