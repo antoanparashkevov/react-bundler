@@ -1,8 +1,9 @@
 import { build as esbuild } from "esbuild";
 import { resolveBuild } from "../resolvePaths";
-import { resolveClientImports } from "../plugins/resolve-client-imports";
+import resolveClientImports from "../plugins/resolve-client-imports";
 
-export default async function Config(entryPoints: string[]) {
+export default async function Config(entryPoints: string[]): Promise<Set<string>> {
+    const clientEntryPoints = new Set<string>();
 
     await esbuild({
         bundle: true,
@@ -11,7 +12,9 @@ export default async function Config(entryPoints: string[]) {
         outdir: resolveBuild(),
         packages: "external",// avoid bundling npm packages
         plugins: [
-            resolveClientImports
+            resolveClientImports(clientEntryPoints)
         ]
     });
+
+    return clientEntryPoints;
 }
